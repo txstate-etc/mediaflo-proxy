@@ -1,0 +1,27 @@
+location ~* ^/oembed {
+  proxy_pass http://mf-oembed$is_args$args;
+  include /etc/nginx/api_proxy.conf;
+}
+
+location ~* ^(.*/permalinks/(.+?)/view)$ {
+  proxy_pass https://${ENSEMBLE_HOST}/$1$is_args$args;
+  include /etc/nginx/api_proxy.conf;
+  proxy_set_header Accept-Encoding "";
+  sub_filter '<head>' '<head><link rel="alternate" type="application/json+oembed" href="/oembed?url=$2"/>';
+  sub_filter_once on;
+}
+
+location ~* ^(/app/content/captions/.*)$ {
+  proxy_pass https://${ENSEMBLE_HOST}$1$is_args$args;
+  include /etc/nginx/api_proxy.conf;
+  proxy_set_header Accept-Encoding "";
+  sub_filter '</body>' '<script src="${MFREV_HOST}/js/mf-rev.js"></script></body>';
+  sub_filter_once on;
+}
+
+location ~* /(.*) {
+  error_log stderr debug;
+  client_max_body_size 5000m;
+  proxy_pass https://${ENSEMBLE_HOST}/$1$is_args$args;
+  include /etc/nginx/api_proxy.conf;
+}

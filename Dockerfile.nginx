@@ -1,0 +1,10 @@
+FROM txstatemws/keygenerator as keygen
+
+FROM registry.its.txstate.edu/apitransform:prod
+
+COPY --from=keygen /securekeys /securekeys
+COPY locations.conf.template /etc/nginx/locations.conf.template
+
+COPY entrypoint.sh /
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["nginx", "-g", "daemon off;"]

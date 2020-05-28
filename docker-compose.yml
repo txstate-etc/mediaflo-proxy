@@ -1,0 +1,17 @@
+version: '3.5'
+services:
+  proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    environment:
+      ENSEMBLE_HOST: vcmsvideoqa1.qual.txstate.edu
+      MFREV_HOST: https://caption-bridge.its.txstate.edu
+    ports:
+      - 443:443
+  mf-oembed:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./src:/usr/app/src

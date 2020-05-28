@@ -1,0 +1,59 @@
+{
+  "name": "mediaflo-proxy",
+  "version": "1.0.0",
+  "description": "A proxy layer in front of Ensemble Video to help us selectively modify the UI for Mediaflo",
+  "scripts": {
+    "build": "tsc",
+    "nodemon": "nodemon",
+    "start": "node lib/index.js",
+    "test": "mocha"
+  },
+  "dependencies": {
+    "fastify-txstate": "^1.0.1",
+    "mssql-async": "^1.0.1",
+    "xml2js": "^0.4.23"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.11",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^14.0.1",
+    "@types/xml2js": "^0.4.5",
+    "@typescript-eslint/eslint-plugin": "^2.28.0",
+    "@typescript-eslint/parser": "^2.28.0",
+    "axios": "^0.19.2",
+    "chai": "^4.2.0",
+    "eslint": "^6.8.0",
+    "eslint-config-standard-with-typescript": "^16.0.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "nodemon": "^2.0.4",
+    "mocha": "^7.1.1",
+    "supertest": "^4.0.2",
+    "ts-node": "^8.8.2",
+    "typescript": "^3.9.0"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "src"
+    ],
+    "ext": "ts",
+    "delay": "80ms",
+    "exec": "npm run build && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/txstate-etc/mediaflo-proxy.git"
+  },
+  "keywords": [
+    "ensemble",
+    "oembed"
+  ],
+  "author": "Nick Wing",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/txstate-etc/mediaflo-proxy/issues"
+  },
+  "homepage": "https://github.com/txstate-etc/mediaflo-proxy#readme"
+}
