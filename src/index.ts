@@ -1,10 +1,21 @@
+import 'source-map-support/register'
+import axios from 'axios'
 import Server, { HttpError } from 'fastify-txstate'
+import formbody from 'fastify-formbody'
 import db from 'mssql-async/db'
+import lti from '@txstate-mws/ims-lti'
+import Signer from '@txstate-mws/ims-lti/lib/hmac-sha1'
+import qs from 'qs'
+import { extractNetIDFromFederated } from 'txstate-utils'
 import { Builder } from 'xml2js'
 const builder = new Builder()
+const ltisigner = new Signer()
 
-const server = new Server()
-server.app.get('/:id', async (req, res) => {
+if (process.env.NODE_ENV === 'development') process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+
+const server = new Server({ trustProxy: true })
+server.app.register(formbody)
+server.app.get('/oembed', async (req, res) => {
   const m = req.query.url.match(/\/(watch|permalinks)\/(.*?)\//i)
   const id = m ? m[2] : req.query.url
   const maxheight = parseInt(req.query.maxheight ?? '0')
@@ -68,4 +79,43 @@ server.app.get('/:id', async (req, res) => {
   if (xml) res.type('text/xml').send(builder.buildObject({ oembed: ret }))
   else return ret
 })
+
+const provider = new lti.Provider(process.env.LTI_KEY, process.env.LTI_SECRET)
+server.app.post('/lti', async (req, res) => {
+  const myreq: any = req
+  myreq.url = `https://${String(process.env.ENSEMBLE_HOST)}${String(req.headers['x-original-path'])}`
+  myreq.method = 'POST'
+  const returnVal: { isValid: boolean, message: string } = await new Promise(resolve => {
+    provider.valid_request(myreq, function (err: any, isValid: boolean) {
+      if (err) {
+        resolve({ isValid: false, message: err.message })
+      } else {
+        resolve({ isValid, message: isValid ? 'Success!' : 'Unexpected validation error during LTI Launch' })
+      }
+    })
+  })
+  if (!returnVal?.isValid) throw new HttpError(401, returnVal?.message)
+  const newbody = { ...req.body, custom_canvas_user_login_id: extractNetIDFromFederated(req.body.custom_canvas_user_login_id) ?? req.body.custom_canvas_user_login_id }
+  const newsig = ltisigner.build_signature(req, newbody, process.env.LTI_SECRET)
+  newbody.oauth_signature = newsig
+  try {
+    const resp = await axios({
+      method: 'post',
+      url: `https://${String(process.env.ENSEMBLE_HOST)}${String(req.headers['x-original-path'])}`,
+      headers: {
+        Host: req.headers.host,
+        'User-Agent': req.headers['user-agent'],
+        Origin: req.headers.origin,
+        Referer: req.headers.referer,
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+      },
+      data: qs.stringify(newbody)
+    })
+    res.status(resp.status).headers(resp.headers).send(resp.data)
+  } catch (e) {
+    if (e.response?.status === 401) throw new HttpError(401, 'Ensemble rejected payload.')
+    else throw e
+  }
+})
+
 server.start().catch(e => console.error(e))

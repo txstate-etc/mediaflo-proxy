@@ -1,5 +1,11 @@
 location ~* ^/oembed {
-  proxy_pass http://mf-oembed$is_args$args;
+  proxy_pass http://mf-oembed/oembed$is_args$args;
+  include /etc/nginx/api_proxy.conf;
+}
+
+location ~* ^/settings/lti/chooser/launch$ {
+  proxy_pass http://mf-oembed/lti$is_args$args;
+  proxy_set_header X-Original-Path '$request_uri';
   include /etc/nginx/api_proxy.conf;
 }
 

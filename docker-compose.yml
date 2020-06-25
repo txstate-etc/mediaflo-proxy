@@ -13,5 +13,16 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
+    environment:
+      ENSEMBLE_HOST: vcmsvideoqa1.qual.txstate.edu
+      NODE_ENV: development
+      DB_HOST: mssqlnodeqa1.qual.txstate.edu
+      DB_PORT: 1451
+      DB_USER: sa-vcmsvideoqa
+      DB_DOMAIN: QUAL
+      DB_PASS: set in docker-compose.override.yml
+      DB_DATABASE: ITS-VCMS
+      LTI_KEY: set in docker-compose.override.yml
+      LTI_SECRET: set in docker-compose.override.yml
     volumes:
       - ./src:/usr/app/src
