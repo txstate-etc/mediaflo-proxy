@@ -1,6 +1,6 @@
 version: '3.5'
 services:
-  mf-proxy-nginx:
+  mfproxy-nginx:
     build:
       context: .
       dockerfile: Dockerfile.nginx
@@ -9,7 +9,7 @@ services:
       MFREV_HOST: https://caption-bridge.its.txstate.edu
     ports:
       - 443:443
-  mf-proxy:
+  mfproxy:
     build:
       context: .
       dockerfile: Dockerfile.dev
