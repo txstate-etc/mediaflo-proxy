@@ -20,24 +20,18 @@
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
-    "@types/chai": "^4.2.11",
-    "@types/mocha": "^7.0.2",
-    "@types/node": "^14.0.14",
+    "@types/node": "^14.0.24",
     "@types/qs": "^6.9.3",
     "@types/xml2js": "^0.4.5",
-    "@typescript-eslint/eslint-plugin": "^3.4.0",
-    "chai": "^4.2.0",
-    "eslint": "^7.3.1",
+    "@typescript-eslint/eslint-plugin": "^3.7.0",
+    "eslint": "^7.5.0",
     "eslint-config-standard-with-typescript": "^18.0.2",
-    "eslint-plugin-import": "^2.21.2",
+    "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "mocha": "^8.0.1",
     "nodemon": "^2.0.4",
-    "supertest": "^4.0.2",
-    "ts-node": "^8.10.2",
-    "typescript": "^3.9.5"
+    "typescript": "^3.9.7"
   },
   "nodemonConfig": {
     "watch": [
