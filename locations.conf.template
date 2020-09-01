@@ -3,6 +3,11 @@ location ~* ^/oembed {
   include /etc/nginx/api_proxy.conf;
 }
 
+location ~* ^/proxy_static(.*) {
+  root /usr/share/nginx/html;
+  try_files $1 =404;
+}
+
 location ~* ^/settings/lti/chooser/launch$ {
   proxy_pass http://mfproxy/lti$is_args$args;
   proxy_set_header X-Original-Path '$request_uri';
@@ -14,6 +19,14 @@ location ~* ^(.*/permalinks/(.+?)/view)$ {
   include /etc/nginx/api_proxy.conf;
   proxy_set_header Accept-Encoding "";
   sub_filter '<head>' '<head><link rel="alternate" type="application/json+oembed" href="/oembed?url=$2"/>';
+  sub_filter_once on;
+}
+
+location ~* ^(/app/content/media.aspx)$ {
+  proxy_pass https://${ENSEMBLE_HOST}$1$is_args$args;
+  include /etc/nginx/api_proxy.conf;
+  proxy_set_header Accept-Encoding "";
+  sub_filter '</body>' '<script src="/proxy_static/watchmanage.js"></script></body>';
   sub_filter_once on;
 }
 

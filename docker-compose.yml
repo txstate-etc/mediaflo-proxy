@@ -7,6 +7,8 @@ services:
     environment:
       ENSEMBLE_HOST: vcmsvideoqa1.qual.txstate.edu
       MFREV_HOST: https://caption-bridge.its.txstate.edu
+    volumes:
+      - ./static:/usr/share/nginx/html
     ports:
       - 443:443
   mfproxy:
