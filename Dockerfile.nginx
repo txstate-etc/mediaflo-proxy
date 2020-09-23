@@ -7,5 +7,6 @@ COPY locations.conf.template /etc/nginx/locations.conf.template
 COPY static /usr/share/nginx/html
 
 COPY entrypoint.sh /
+ENV TZ=America/Chicago
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]
