@@ -42,5 +42,6 @@ location ~* /(.*) {
   error_log stderr debug;
   client_max_body_size 0;
   proxy_pass https://${ENSEMBLE_HOST}/$1$is_args$args;
+  proxy_read_timeout 1h;
   include /etc/nginx/api_proxy.conf;
 }
