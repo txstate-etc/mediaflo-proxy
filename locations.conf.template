@@ -18,7 +18,7 @@ location ~* ^(.*/permalinks/(.+?)/view)$ {
   proxy_pass https://${ENSEMBLE_HOST}/$1$is_args$args;
   include /etc/nginx/api_proxy.conf;
   proxy_set_header Accept-Encoding "";
-  sub_filter '<head>' '<head><link rel="alternate" type="application/json+oembed" href="/oembed?url=$2"/>';
+  sub_filter '<head>' '<head><link rel="alternate" type="application/json+oembed" href="$scheme://$host/oembed?url=$2"/>';
   sub_filter_once on;
 }
 
