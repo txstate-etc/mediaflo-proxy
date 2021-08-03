@@ -34,7 +34,7 @@ server.app.get('/oembed', async (req, res) => {
   )
   if (!encoding) encoding = { width: 1920, height: 1080 }
   // currently, mediaflo always creates a 16/9 player, so the encoding width should reflect that
-  encoding.width = encoding.height * 16.0 / 9.0
+  encoding.width = Math.round(encoding.height * 16.0 / 9.0)
 
   const ar = encoding.width / encoding.height
   let finalwidth = 0
