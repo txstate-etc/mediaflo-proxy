@@ -1,5 +1,6 @@
 import 'source-map-support/register'
 import axios from 'axios'
+import { FastifyRequest } from 'fastify'
 import Server, { HttpError } from 'fastify-txstate'
 import formbody from 'fastify-formbody'
 import db from 'mssql-async/db'
@@ -14,8 +15,8 @@ const ltisigner = new Signer()
 if (process.env.NODE_ENV === 'development') process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 const server = new Server({ trustProxy: true })
-server.app.register(formbody)
-server.app.get('/oembed', async (req, res) => {
+void server.app.register(formbody)
+server.app.get('/oembed', async (req: FastifyRequest<{ Querystring: { url: string, maxwidth?: string, maxheight?: string, format?: string, test?: string } }>, res) => {
   const m = req.query.url.match(/\/(watch|permalinks)\/(.*?)\//i)
   const id = m ? m[2] : req.query.url
   const maxheight = parseInt(req.query.maxheight ?? '0')
@@ -75,13 +76,13 @@ server.app.get('/oembed', async (req, res) => {
 </div>`
   }
 
-  if (req.query.test) res.type('text/html').send(`<!DOCTYPE html><html><head><title>Embed Test</title></head><body>${ret.html}</body></html>`)
-  if (xml) res.type('text/xml').send(builder.buildObject({ oembed: ret }))
+  if (req.query.test) await res.type('text/html').send(`<!DOCTYPE html><html><head><title>Embed Test</title></head><body>${ret.html}</body></html>`)
+  else if (xml) await res.type('text/xml').send(builder.buildObject({ oembed: ret }))
   else return ret
 })
 
 const provider = new lti.Provider(process.env.LTI_KEY, process.env.LTI_SECRET)
-server.app.post('/lti', async (req, res) => {
+server.app.post('/lti', async (req: FastifyRequest<{ Body: any }>, res) => {
   const myreq: any = req
   myreq.url = `https://${String(process.env.ENSEMBLE_HOST)}${String(req.headers['x-original-path'])}`
   myreq.method = 'POST'
@@ -99,20 +100,20 @@ server.app.post('/lti', async (req, res) => {
   const newsig = ltisigner.build_signature(req, newbody, process.env.LTI_SECRET)
   newbody.oauth_signature = newsig
   try {
-    const resp = await axios({
+    const resp = await axios.request({
       method: 'post',
       url: `https://${String(process.env.ENSEMBLE_HOST)}${String(req.headers['x-original-path'])}`,
       headers: {
-        Host: req.headers.host,
-        'User-Agent': req.headers['user-agent'],
-        Origin: req.headers.origin,
-        Referer: req.headers.referer,
+        Host: req.headers.host ?? '',
+        'User-Agent': req.headers['user-agent'] ?? '',
+        Origin: req.headers.origin ?? '',
+        Referer: req.headers.referer ?? '',
         'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
       },
       data: qs.stringify(newbody)
     })
-    res.status(resp.status).headers(resp.headers).send(resp.data)
-  } catch (e) {
+    await res.status(resp.status).headers(resp.headers).send(resp.data)
+  } catch (e: any) {
     if (e.response?.status === 401) throw new HttpError(401, 'Ensemble rejected payload.')
     else throw e
   }

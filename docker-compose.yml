@@ -18,7 +18,7 @@ services:
     environment:
       ENSEMBLE_HOST: vcmsvideoqa1.qual.txstate.edu
       NODE_ENV: development
-      DB_HOST: mssqlnodeqa1.qual.txstate.edu
+      DB_HOST: sqlnodeqa1.qual.txstate.edu
       DB_PORT: 1451
       DB_USER: sa-vcmsvideoqa
       DB_DOMAIN: QUAL
