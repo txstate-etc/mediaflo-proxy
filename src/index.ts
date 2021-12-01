@@ -14,7 +14,7 @@ const ltisigner = new Signer()
 
 if (process.env.NODE_ENV === 'development') process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
-const server = new Server({ trustProxy: true })
+const server = new Server({ trustProxy: true, skipOriginCheck: true })
 void server.app.register(formbody)
 server.app.get('/oembed', async (req: FastifyRequest<{ Querystring: { url: string, maxwidth?: string, maxheight?: string, format?: string, test?: string } }>, res) => {
   const m = req.query.url.match(/\/(watch|permalinks)\/(.*?)\//i)
@@ -84,8 +84,7 @@ server.app.get('/oembed', async (req: FastifyRequest<{ Querystring: { url: strin
 const provider = new lti.Provider(process.env.LTI_KEY, process.env.LTI_SECRET)
 server.app.post('/lti', async (req: FastifyRequest<{ Body: any }>, res) => {
   const myreq: any = req
-  myreq.url = `https://${String(process.env.ENSEMBLE_HOST)}${String(req.headers['x-original-path'])}`
-  myreq.method = 'POST'
+  myreq.originalUrl = `https://${String(process.env.ENSEMBLE_HOST)}${String(req.headers['x-original-path'])}`
   const returnVal: { isValid: boolean, message: string } = await new Promise(resolve => {
     provider.valid_request(myreq, function (err: any, isValid: boolean) {
       if (err) {
