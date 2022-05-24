@@ -1,3 +1,7 @@
+if ($is_xss) {
+  return 444;
+}
+
 location ~* ^/oembed {
   proxy_pass http://mfproxy/oembed$is_args$args;
   include /etc/nginx/api_proxy.conf;

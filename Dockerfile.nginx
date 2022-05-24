@@ -4,6 +4,7 @@ FROM registry.its.txstate.edu/apitransform:prod
 
 COPY --from=keygen /securekeys /securekeys
 COPY locations.conf.template /etc/nginx/locations.conf.template
+COPY http_block.conf /etc/nginx/http_block.conf
 COPY static /usr/share/nginx/html
 
 COPY entrypoint.sh /
