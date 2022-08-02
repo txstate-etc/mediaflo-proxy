@@ -21,8 +21,8 @@ location ~* ^/settings/lti/chooser/launch$ {
 location ~* ^(?<req_path>/app/plugin/embed.aspx)$ {
   if ($args ~* id=(?<mf_permalink>[^&]+)) {
   }
-  if ($mf_permalink_yujalink) {
-    return 302 $mf_permalink_yujalink;
+  if ($mf_permalink_target) {
+    return 302 $mf_permalink_target;
   }
 
   proxy_pass https://${ENSEMBLE_HOST}$req_path$is_args$args;
@@ -30,8 +30,8 @@ location ~* ^(?<req_path>/app/plugin/embed.aspx)$ {
 }
 
 location ~* ^(/hapi/v1/contents/(?<mf_videoid>.+?)/plugin)$ {
-  if ($mf_videoid_yujalink) {
-    return 302 $mf_videoid_yujalink;
+  if ($mf_videoid_target) {
+    return 302 $mf_videoid_target;
   }
 
   proxy_pass https://${ENSEMBLE_HOST}$1$is_args$args;
@@ -39,8 +39,8 @@ location ~* ^(/hapi/v1/contents/(?<mf_videoid>.+?)/plugin)$ {
 }
 
 location ~* ^(/Watch/(?<mf_permalink>.+?))$ {
-  if ($mf_permalink_yujalink) {
-    return 302 $mf_permalink_yujalink;
+  if ($mf_permalink_target) {
+    return 302 $mf_permalink_target;
   }
 
   proxy_pass https://${ENSEMBLE_HOST}$1$is_args$args;
@@ -48,8 +48,8 @@ location ~* ^(/Watch/(?<mf_permalink>.+?))$ {
 }
 
 location ~* ^(.*/permalinks/(?<mf_permalink>.+?)/view)$ {
-  if ($mf_permalink_yujalink) {
-    return 302 $mf_permalink_yujalink;
+  if ($mf_permalink_target) {
+    return 302 $mf_permalink_target;
   }
 
   proxy_pass https://${ENSEMBLE_HOST}/$1$is_args$args;
