@@ -18,7 +18,40 @@ location ~* ^/settings/lti/chooser/launch$ {
   include /etc/nginx/api_proxy.conf;
 }
 
-location ~* ^(.*/permalinks/(.+?)/view)$ {
+location ~* ^(?<req_path>/app/plugin/embed.aspx)$ {
+  if ($args ~* id=(?<mf_permalink>[^&]+)) {
+  }
+  if ($mf_permalink_yujalink) {
+    return 302 $mf_permalink_yujalink;
+  }
+
+  proxy_pass https://${ENSEMBLE_HOST}$req_path$is_args$args;
+  include /etc/nginx/api_proxy.conf;
+}
+
+location ~* ^(/hapi/v1/contents/(?<mf_videoid>.+?)/plugin)$ {
+  if ($mf_videoid_yujalink) {
+    return 302 $mf_videoid_yujalink;
+  }
+
+  proxy_pass https://${ENSEMBLE_HOST}$1$is_args$args;
+  include /etc/nginx/api_proxy.conf;
+}
+
+location ~* ^(/Watch/(?<mf_permalink>.+?))$ {
+  if ($mf_permalink_yujalink) {
+    return 302 $mf_permalink_yujalink;
+  }
+
+  proxy_pass https://${ENSEMBLE_HOST}$1$is_args$args;
+  include /etc/nginx/api_proxy.conf;
+}
+
+location ~* ^(.*/permalinks/(?<mf_permalink>.+?)/view)$ {
+  if ($mf_permalink_yujalink) {
+    return 302 $mf_permalink_yujalink;
+  }
+
   proxy_pass https://${ENSEMBLE_HOST}/$1$is_args$args;
   include /etc/nginx/api_proxy.conf;
   proxy_set_header Accept-Encoding "";
