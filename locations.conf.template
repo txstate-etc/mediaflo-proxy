@@ -7,6 +7,10 @@ location ~* ^/oembed {
   include /etc/nginx/api_proxy.conf;
 }
 
+location ~* ^(/services/oembed)$ {
+  return 302 https://${SERVICES_OEMBED_REDIR_HOST}$1$is_args$args;
+}
+
 location ~* ^/proxy_static(.*) {
   root /usr/share/nginx/html;
   try_files $1 =404;
