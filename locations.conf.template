@@ -8,7 +8,8 @@ location ~* ^/oembed {
 }
 
 location ~* ^(/services/oembed)$ {
-  return 302 https://${SERVICES_OEMBED_REDIR_HOST}$1$is_args$args;
+  proxy_pass https://${SERVICES_OEMBED_REDIR_HOST}$1$is_args$args;
+  include /etc/nginx/api_proxy.conf;
 }
 
 location ~* ^/proxy_static(.*) {
