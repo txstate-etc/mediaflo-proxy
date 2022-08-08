@@ -34,7 +34,7 @@ location ~* ^(?<req_path>/app/plugin/embed.aspx)$ {
   include /etc/nginx/api_proxy.conf;
 }
 
-location ~* ^(/hapi/v1/contents/(?<mf_videoid>.+?)/plugin)$ {
+location ~* ^(/hapi/v1/contents/(?<mf_videoid>.+?)/(plugin|launch))$ {
   if ($mf_videoid_target) {
     return 302 $mf_videoid_target;
   }
